@@ -1,17 +1,4 @@
-/**
- * This class represents a list of integers. The underlying data structure is an array. 
- * Array is a fixed size data structure, where is the List is supposed to be flexible. Therefore, to create 
- * flexible list, the array is created with a fixed size and when the array is full, a new array is created  
- * with higher capacity and the data is copied to the new array.
- * 
- * The creation of new array and copying of data is an expensive operation will impact on the performance
- * of the list and its Big O notation.
- * 
- * @author Usman Aslam
- * @version 1.0
- * @since 2024-03-08
- * 
- */
+
 
 package com.usman.csudh.csc311.adt.impl;
 
