@@ -16,150 +16,114 @@ package com.usman.csudh.csc311.adt.impl;
 
 import com.usman.csudh.csc311.adt.Stack;
 import com.usman.csudh.csc311.adt.StackEmptyException;
+/**
+ * This class represents a stack implemented using an array.
+ * 
+ * The stack dynamically resizes its underlying array to accommodate more elements
+ * as needed.
+ * 
+ * @param <T> the type of elements stored in the stack
+ * @since 2024-03-08
+ */
+public class ArrayStack<T> implements Stack<T> {
+    private static final int DEFAULT_CAPACITY = 50;
+    private static final int GROW_BY = 2;
 
-public class ArrayStack implements Stack {
-	/**
-	 * The default capacity of the stack.
-	 *
-	 */
-	private static final int DEFAULT_CAPACITY = 50;
-	
-	
-	/**
-	 * The underlying array will grow by this number when the it is full.
-	 */
-	private static final int GROW_BY = 25;
-	
-	
-	/**
-	 * The underlying array to hold the data.
-	 */
-	private int[] data;
-	
-	/**
-	 * The pointer variable to keep track the current position of the array
-	 */
-	int stackPointer=0;
-	
-	/**
-	 * The default constructor to create a stack with the initial capacity.
-	 *
-	 */
-	public ArrayStack() {
-		data= new int[DEFAULT_CAPACITY];
-	}
-	
-	/**
-	 * The constructor to create a stack with the given size.
-	 * 
-	 * @param size the size of the stack
-	 *
-	 */
-	public ArrayStack(int size) {
-		data = new int[size];
-	}
-	
-	/**
-	 * The method to add an item to the stack.
-	 * 
-	 * @param item the value to be added to the stack
-	 *
-	 */
-	public void push(int item) {
-		//check if the array is full and if so, resize it
-		if (stackPointer == data.length) {
-			resizeArray();
-		}
-		
-		//add the item to the stack
-		data[stackPointer++] = item;
+    private T[] data;
+    private int stackPointer = 0;
 
-	}
-	
-	/**
-	 * The method to remove an item from the stack.
-	 * @return the item removed from the stack
-	 * @throws StackEmptyException if the stack is empty
-	 */
-	public int pop() throws StackEmptyException{
-		//check if the stack is empty
-		if (stackPointer == 0) {
-			throw new StackEmptyException("Stack is empty");
-		}
-		
-		//remove the item from the stack
-		return data[--stackPointer];
-	}
-	
-	/**
-	 * The method to get the value at the top of the stack. It will not remove the
-	 * value from the stack.
-	 * 
-	 * @return the value at the top of the stack
-	 * @throws StackEmptyException if the stack is empty
-	 */
-	public int peek() throws StackEmptyException {
-		//check if the stack is empty
-		if (stackPointer == 0) {
-			throw new StackEmptyException("Stack is empty");
-		}
-		return data[stackPointer-1];
-	}
-	
-	/**
-	 * The method returns the size of the stack.
-	 * 
-	 * @return the size of the stack
-	 */
-	public int size() {
-		return stackPointer;
-	}
+    /**
+     * Constructs a stack with the default initial capacity.
+     */
+    public ArrayStack() {
+        data = (T[]) new Object[DEFAULT_CAPACITY];
+    }
 
-	/**
-	 * The method returns true if the stack is empty, otherwise it returns false.
-	 * 
-	 * @return true if the stack is empty, otherwise false
-	 */
-	public boolean isEmpty() {
-		return stackPointer == 0;
-	}
-	
-	/**
-	 * The method to clear the stack.
-	 *
-	 */
-	public void clear() {
-		stackPointer = 0;
-	}
-	
-	
-	/**
-	 * The method to resize the array when it is full.
-	 *
-	 */
-	private void resizeArray() {
-		int loopCount = 0;
-		int[] newData = new int[data.length +GROW_BY];
-		for (int i = 0; i < data.length; i++) {
-			newData[i] = data[i];
-			loopCount++;
-		}
-		data = newData;
-		System.out.println("Resize: "+loopCount);
-	}
-	
-	/**
-	 * This method returns String representation of the stack.
-	 * 
-	 * @return the value at the given index
-	 */
-	@Override
-	public String toString() {
-		String result = "";
-		for (int i = stackPointer-1; i >= 0; i--) {
-			result += data[i] + "\n";
-		}
-		return result;
-	}
+    /**
+     * Constructs a stack with the specified initial capacity.
+     * 
+     * @param size the initial capacity of the stack
+     */
+    public ArrayStack(int size) {
+        data = (T[]) new Object[size];
+    }
 
+    /**
+     * Pushes an item onto the top of this stack.
+     * 
+     * @param item the item to be pushed onto this stack
+     */
+    public void push(T item) {
+        if (stackPointer == data.length) {
+            resizeArray();
+        }
+        data[stackPointer++] = item;
+    }
+
+    /**
+     * Removes the object at the top of this stack and returns that object.
+     * 
+     * @return the item removed from the top of the stack
+     * @throws StackEmptyException if the stack is empty
+     */
+    public T pop() throws StackEmptyException {
+        if (isEmpty()) {
+            throw new StackEmptyException("Stack is empty");
+        }
+        return data[--stackPointer];
+    }
+
+    /**
+     * Looks at the object at the top of this stack without removing it from the stack.
+     * 
+     * @return the item at the top of the stack
+     * @throws StackEmptyException if the stack is empty
+     */
+    public T peek() throws StackEmptyException {
+        if (isEmpty()) {
+            throw new StackEmptyException("Stack is empty");
+        }
+        return data[stackPointer - 1];
+    }
+
+    /**
+     * Returns the number of elements in the stack.
+     * 
+     * @return the number of elements in the stack
+     */
+    public int size() {
+        return stackPointer;
+    }
+
+    /**
+     * Tests if this stack is empty.
+     * 
+     * @return true if and only if this stack contains no items; false otherwise
+     */
+    public boolean isEmpty() {
+        return stackPointer == 0;
+    }
+
+    /**
+     * Removes all of the elements from this stack. The stack will be empty after this call returns.
+     */
+    public void clear() {
+        stackPointer = 0;
+    }
+
+    private void resizeArray() {
+        int newCapacity = data.length * GROW_BY;
+        T[] newData = (T[]) new Object[newCapacity];
+        System.arraycopy(data, 0, newData, 0, data.length);
+        data = newData;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (int i = stackPointer - 1; i >= 0; i--) {
+            result.append(data[i]).append("\n");
+        }
+        return result.toString();
+    }
 }

@@ -18,232 +18,207 @@ package com.usman.csudh.csc311.adt.impl;
 import com.usman.csudh.csc311.adt.List;
 import com.usman.csudh.csc311.adt.ListInvalidIndexException;
 
-public class ArrayList implements List{
+/**
+ * This class represents a list that dynamically resizes its underlying array
+ * to accommodate more elements as needed.
+ * 
+ * The resizing strategy used here is to double the array's capacity whenever
+ * it becomes full, reducing the frequency of resizing operations and improving
+ * performance.
+ * 
+ * This implementation supports storing elements of any type.
+ * 
+ * @param <T> the type of elements stored in the list
+ * @since 2024-03-08
+ */
+public class ArrayList<T> implements List<T> {
 
-	/**
-	 * The initial capacity of the list.
-	 *
-	 */
+    /**
+     * The initial capacity of the list.
+     */
+    private static final int INITIAL_CAPACITY = 50;
 
-	static final int INITIAL_CAPACITY = 50;
+    /**
+     * The factor by which the array is resized when it becomes full.
+     */
+    private static final int RESIZE_FACTOR = 2;
 
-	/**
-	 * The underlying array will grow by this number when the it is full.
-	 */
+    /**
+     * The underlying array to hold the data.
+     */
+    private Object[] data;
 
-	static final int GROW_BY = 25;
+    /**
+     * The pointer variable to keep track of the current position of the array.
+     */
+    private int arrayPointer = 0;
 
-	/**
-	 * The underlying array to hold the data.
-	 */
-	private int[] data;
+    /**
+     * Constructs an ArrayList with the initial capacity.
+     */
+    public ArrayList() {
+        data = new Object[INITIAL_CAPACITY];
+    }
 
-	/**
-	 * The pointer variable to keep track the current position of the array
-	 */
-	int arrayPointer = 0;
+    /**
+     * Constructs an ArrayList with the specified size.
+     * 
+     * @param size the initial size of the list
+     */
+    public ArrayList(int size) {
+        data = new Object[size];
+    }
 
-	/**
-	 * The default constructor to create a list with the initial capacity.
-	 *
-	 */
-	public ArrayList() {
-		data = new int[INITIAL_CAPACITY];
-	}
+    /**
+     * Adds an item to the end of the list. If the underlying array is full, it is
+     * resized to accommodate more elements.
+     * 
+     * @param item the value to add to the list
+     */
+    public void add(T item) {
+        if (arrayPointer == data.length) {
+            resizeArray();
+        }
+        data[arrayPointer++] = item;
+    }
 
-	/**
-	 * The constructor to create a list with the given size.
-	 * 
-	 * @param size the size of the list
-	 *
-	 */
-	public ArrayList(int size) {
-		data = new int[size];
-	}
+    /**
+     * Adds an array of items to the end of the list. If the underlying array is
+     * full, it is resized to accommodate more elements.
+     * 
+     * @param items the array to add to the list
+     */
+    public void add(T[] items) {
+        for (T item : items) {
+            add(item);
+        }
+    }
 
-	/**
-	 * The method to add an item to the list. The item is added to the end of the
-	 * list. The size of the underlying array is checked and if the array is full, a
-	 * new array is created with higher capacity.
-	 * 
-	 * @param item the value to add to the list
-	 *
-	 */
-	public void add(int item) {
-		if (arrayPointer == data.length) {
-			resizeArray();
-		}
-		data[arrayPointer++] = item;
+    /**
+     * Replaces the value at the specified index with the given item.
+     * 
+     * @param index the index of the value to replace
+     * @param item  the new value to set
+     * @throws ListInvalidIndexException if the index is out of bounds
+     */
+    public void put(int index, T item) throws ListInvalidIndexException {
+        if (index >= arrayPointer || index < 0) {
+            throwInvalidIndexException();
+        }
+        data[index] = item;
+    }
 
-	}
+    /**
+     * Returns the size of the list.
+     * 
+     * @return the size of the list
+     */
+    public int size() {
+        return arrayPointer;
+    }
 
-	/**
-	 * The method to add an array of items to the list. The items are added to the end of the
-	 * list. The size of the underlying array is checked and if the array is full, a
-	 * new array is created with higher capacity.
-	 * 
-	 * @param items the array to add to the list
-	 *
-	 */
-	public void add(int[] items) {
-		for (int i : items) {
-			add(i);
-		}
+    /**
+     * Checks whether the list is empty.
+     * 
+     * @return true if the list is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return arrayPointer == 0;
+    }
 
-	}
+    /**
+     * Clears the list by resetting the array pointer and creating a new array with
+     * the initial capacity.
+     */
+    public void clear() {
+        arrayPointer = 0;
+        data = new Object[INITIAL_CAPACITY];
+    }
 
-	/**
-	 * The method to get the value at the given index. It will replace the existing
-	 * value at the given index.
-	 * 
-	 * 
-	 * @param index the index of the value to get
-	 * @param item  the value to add to the list
-	 * @return the value at the given index
-	 *
-	 */
-	public void put(int index, int item) throws ListInvalidIndexException{
-		if (index > arrayPointer-1 || index < 0) {
-			throwInvalidIndexException();
-		}
-		data[index] = item;
-	}
+    /**
+     * Inserts the given value at the specified index. If the array is full, it is
+     * resized to accommodate more elements.
+     * 
+     * @param index the index at which to insert the value
+     * @param item  the value to insert
+     * @throws ListInvalidIndexException if the index is out of bounds
+     */
+    public void insert(int index, T item) throws ListInvalidIndexException {
+        if (index > arrayPointer || index < 0) {
+            throwInvalidIndexException();
+        }
 
-	/**
-	 * The method returns the size of the list.
-	 * 
-	 * @return the size of the list
-	 */
-	public int size() {
-		return arrayPointer;
-	}
-	
-	
-	/**
-	 * The method returns the size of the list.
-	 * 
-	 * @return the size of the list
-	 */
-	public boolean isEmpty() {
-		return arrayPointer == 0;
-	}
-	
-	
-	public void clear() {
-		arrayPointer = 0;
-		data = new int[INITIAL_CAPACITY];
-	}
-	
-	
-	
-	/**
-	 * The method inserts the given value at the given index. The existing value at
-	 * the given index is moved to the right. If the array is full, a new array is
-	 * created with higher capacity.
-	 * 
-	 * @param item  the value to insert
-	 * @param index the index to insert the value
-	 */
-	public void insert(int index, int item) throws ListInvalidIndexException {
+        if (arrayPointer == data.length) {
+            resizeArray();
+        }
 
+        System.arraycopy(data, index, data, index + 1, arrayPointer - index);
+        data[index] = item;
+        arrayPointer++;
+    }
 
-		// Check if the index is valid
-		if (index > arrayPointer || index < 0) {
-			throwInvalidIndexException();
-		}
-		// Counter to keep track of the number of loops for the insert operation
-		int loopCount = 0;
+    /**
+     * Retrieves the value at the specified index.
+     * 
+     * @param index the index of the value to retrieve
+     * @return the value at the specified index
+     * @throws ListInvalidIndexException if the index is out of bounds
+     */
+    public T get(int index) throws ListInvalidIndexException {
+        if (index >= arrayPointer || index < 0) {
+            throwInvalidIndexException();
+        }
+        return (T) data[index];
+    }
 
-		// Check if the array is full and resize the array if it is full
-		if (arrayPointer == data.length) {
-			resizeArray();
-		}
+    /**
+     * Removes the value at the specified index from the list.
+     * 
+     * @param index the index of the value to remove
+     * @return the value that was removed
+     * @throws ListInvalidIndexException if the index is out of bounds
+     */
+    public T remove(int index) throws ListInvalidIndexException {
+        if (index >= arrayPointer || index < 0) {
+            throwInvalidIndexException();
+        }
 
-		// Move the values to the right to create space for the new value
-		for (int i = arrayPointer; i > index; i--) {
-			data[i] = data[i - 1];
-			loopCount++;
-		}
+        T removedItem = (T) data[index];
+        System.arraycopy(data, index + 1, data, index, arrayPointer - index - 1);
+        arrayPointer--;
+        return removedItem;
+    }
 
-		// Insert the value at the given index
-		data[index] = item;
+    /**
+     * Returns a string representation of the list.
+     * 
+     * @return a string representation of the list
+     */
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < arrayPointer; i++) {
+            result.append(data[i]).append(" ");
+        }
+        return result.toString();
+    }
 
-		// Increment the array pointer
-		arrayPointer++;
-		System.out.println("Insert: " + loopCount);
-	}
+    /**
+     * Resizes the underlying array by creating a new array with double the
+     * capacity and copying the data to the new array.
+     */
+    private void resizeArray() {
+        Object[] newData = new Object[data.length * RESIZE_FACTOR];
+        System.arraycopy(data, 0, newData, 0, arrayPointer);
+        data = newData;
+    }
 
-	public int get(int index) throws ListInvalidIndexException{
-		
-		// Check if the index is valid	
-		if (index >= arrayPointer || index < 0) {
-			throwInvalidIndexException();
-		}
-		
-
-		return data[index];
-	
-	}
-
-	/**
-	 * This method deletes the value at the given index. The values to the right of
-	 * the given index are moved to the left.
-	 * 
-	 * @param index the index of the value to delte
-	 */
-
-	public int remove(int index) throws ListInvalidIndexException{
-
-		// Check if the index is valid
-		if (index > arrayPointer || index < 0) {
-			throwInvalidIndexException();
-		}
-
-		
-		int loopCount = 0;
-
-		int value = data[index];
-		
-		// Move the values to the left to fill the space created by the deleted value
-		for (int i = index; i < arrayPointer; i++) {
-			data[i] = data[i + 1];
-			loopCount++;
-		}
-		// Decrement the array pointer because the value is deleted
-		arrayPointer--;
-		System.out.println("Delete: " + loopCount);
-		return value;
-	}
-
-	/**
-	 * This method returns String representation of the list.
-	 * 
-	 * @return the value at the given index
-	 */
-	@Override
-	public String toString() {
-		String result = "";
-		for (int i = 0; i < arrayPointer; i++) {
-			result += data[i] + " ";
-		}
-		return result;
-	}
-
-	// Method resizes the array by creating a new array with higher capacity and
-	// copying the data to the new array
-	private void resizeArray() {
-		int loopCount = 0;
-		int[] newData = new int[data.length + GROW_BY];
-		for (int i = 0; i < data.length; i++) {
-			newData[i] = data[i];
-			loopCount++;
-		}
-		data = newData;
-		System.out.println("Resize: " + loopCount);
-	}
-	
-	private void throwInvalidIndexException() throws ListInvalidIndexException{
-		throw new ListInvalidIndexException("Invalid index");
-	}
-
-}
+    /**
+     * Throws a ListInvalidIndexException with the message "Invalid index".
+     * 
+     * @throws ListInvalidIndexException always
+     */
+    private void throwInvalidIndexException() throws ListInvalidIndexException {
+        throw new ListInvalidIndexException("Invalid index");
+    }
+    

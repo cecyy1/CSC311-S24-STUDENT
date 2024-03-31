@@ -2,116 +2,126 @@ package com.usman.csudh.csc311.adt.impl;
 
 import com.usman.csudh.csc311.adt.Queue;
 import com.usman.csudh.csc311.adt.QueueEmptyException;
-public class ArrayQueue  implements Queue{
-	/**
-	 * The initial capacity of the list.
-	 *
-	 */
+/**
+ * This class represents a queue implemented using an array.
+ * 
+ * The queue dynamically resizes its underlying array to accommodate more elements
+ * as needed.
+ * 
+ * @param <T> the type of elements stored in the queue
+ * @since 2024-03-08
+ */
+public class ArrayQueue<T> implements Queue<T> {
+    private static final int INITIAL_CAPACITY = 50;
+    private static final int GROW_BY = 25;
 
-	static final int INITIAL_CAPACITY = 50;
-	static final int QUEUE_HEAD=0;
+    private T[] data;
+    private int front;
+    private int rear;
+    private int size;
 
-	/**
-	 * The underlying array will grow by this number when the it is full.
-	 */
+    /**
+     * Constructs a queue with the default initial capacity.
+     */
+    public ArrayQueue() {
+        data = (T[]) new Object[INITIAL_CAPACITY];
+        front = 0;
+        rear = -1; // Initially, there are no elements in the queue
+        size = 0;
+    }
 
-	static final int GROW_BY = 25;
+    /**
+     * Constructs a queue with the specified initial capacity.
+     * 
+     * @param initialCapacity the initial capacity of the queue
+     */
+    public ArrayQueue(int initialCapacity) {
+        if (initialCapacity <= 0) {
+            throw new IllegalArgumentException("Initial capacity must be positive");
+        }
+        data = (T[]) new Object[initialCapacity];
+        front = 0;
+        rear = -1;
+        size = 0;
+    }
 
-	/**
-	 * The underlying array to hold the data.
-	 */
-	private int[] data;
+    /**
+     * Adds an item to the end of the queue.
+     * 
+     * @param item the item to add
+     */
+    public void add(T item) {
+        if (size == data.length) {
+            resizeArray();
+        }
+        rear = (rear + 1) % data.length;
+        data[rear] = item;
+        size++;
+    }
 
-	/**
-	 * The pointer variable to keep track the current position of the array
-	 */
-	int qPointer = 0;
+    /**
+     * Removes and returns the item at the front of the queue.
+     * 
+     * @return the item removed from the queue
+     * @throws QueueEmptyException if the queue is empty
+     */
+    public T remove() throws QueueEmptyException {
+        if (isEmpty()) {
+            throw new QueueEmptyException("Queue is empty");
+        }
+        T removedItem = data[front];
+        front = (front + 1) % data.length;
+        size--;
+        return removedItem;
+    }
 
-	/**
-	 * The default constructor to create a list with the initial capacity.
-	 *
-	 */
-	public ArrayQueue() {
-		data = new int[INITIAL_CAPACITY];
-	}
+    private void resizeArray() {
+        T[] newData = (T[]) new Object[data.length + GROW_BY];
+        for (int i = 0; i < size; i++) {
+            newData[i] = data[(front + i) % data.length];
+        }
+        data = newData;
+        front = 0;
+        rear = size - 1;
+    }
 
-	/**
-	 * The constructor to create a list with the given size.
-	 * 
-	 * @param size the size of the list
-	 *
-	 */
-	public ArrayQueue(int size) {
-		data = new int[size];
-	}
-	
-	public void add(int item) {
-		if (qPointer == data.length) {
-			resizeArray();
-		}
-		data[qPointer++] = item;
+    /**
+     * Retrieves, but does not remove, the item at the front of the queue.
+     * 
+     * @return the item at the front of the queue
+     * @throws QueueEmptyException if the queue is empty
+     */
+    public T peek() throws QueueEmptyException {
+        if (isEmpty()) {
+            throw new QueueEmptyException("Queue is empty");
+        }
+        return data[front];
+    }
 
-	}
+    /**
+     * Returns the number of elements in the queue.
+     * 
+     * @return the number of elements in the queue
+     */
+    public int size() {
+        return size;
+    }
 
-	public int remove() throws QueueEmptyException {
-		
-		// Check if the index is valid
-		if (qPointer==0) {
-			throw new QueueEmptyException("Queue is empty");
-		}
-		int itemToReturn = data[QUEUE_HEAD];
-		int loopCount = 0;
+    /**
+     * Checks if the queue is empty.
+     * 
+     * @return true if the queue is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-		// Move the values to the left to fill the space created by the deleted value
-		for (int i = 0; i < qPointer; i++) {
-			data[i] = data[i + 1];
-			loopCount++;
-		}
-		// Decrement the array pointer because the value is deleted
-		qPointer--;
-		System.out.println("Delete: " + loopCount);
-		return itemToReturn;
-	}
-	
-	// Method resizes the array by creating a new array with higher capacity and
-	// copying the data to the new array
-	private void resizeArray() {
-		int loopCount = 0;
-		int[] newData = new int[data.length + GROW_BY];
-		for (int i = 0; i < data.length; i++) {
-			newData[i] = data[i];
-			loopCount++;
-		}
-		data = newData;
-		System.out.println("Resize: " + loopCount);
-	}
-
-	@Override
-	public int peek() throws QueueEmptyException {
-		
-		if (qPointer == 0) {
-			throw new QueueEmptyException("Queue is empty");
-		}
-		return data[QUEUE_HEAD];
-	}
-	
-
-	@Override
-	public int size() {
-		return qPointer;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return qPointer == 0;
-	}
-
-	@Override
-	public void clear() {
-		qPointer = 0;
-		
-	}
-
-	
-
+    /**
+     * Clears the queue, removing all elements.
+     */
+    public void clear() {
+        front = 0;
+        rear = -1;
+        size = 0;
+    }
 }
