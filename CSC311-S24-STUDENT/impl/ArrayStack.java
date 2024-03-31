@@ -1,16 +1,4 @@
-/**
- * Title: Stack.java
- * Abstract: This program implements a stack using an array. 
- * It has push, pop, peek, size, and isEmpty methods.
- * he underlying data structure is an array. 
- * Array is a fixed size data structure, where is the List is supposed to be flexible. Therefore, to create 
- * flexible list, the array is created with a fixed size and when the array is full, a new array is created  
- * with higher capacity and the data is copied to the new array.
- * @author Usman Aslam
- * @version 1.0
- * @since 2024-03-08
- * 
- */
+
 
 package com.usman.csudh.csc311.adt.impl;
 
